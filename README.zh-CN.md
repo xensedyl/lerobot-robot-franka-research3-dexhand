@@ -23,13 +23,21 @@ pip install -e ./lerobot-robot-franka-research3
 pip install -e ./lerobot-robot-revo2-hand
 ```
 
-Franka 包还需要 `franky`：
+Franka 包还需要 `franky`。如果使用本地源码，先初始化 `ruckig` 子模块，
+再关闭 pip build isolation 安装：
 
 ```bash
-pip install -e ./franky
+cd franky
+git submodule update --init --recursive
+pip install -e . --no-build-isolation
 ```
 
-或者直接从 Git 安装：
+`ruckig` 是 CMake 必需的子模块；如果 `ruckig/` 是空目录，会报
+`does not contain a CMakeLists.txt file`。如果当前环境里的 `cmake` 来自
+Python `cmake` 包，`--no-build-isolation` 可以避免 pip 隔离构建环境里
+`ModuleNotFoundError: No module named 'cmake'`。
+
+也可以直接从 Git 安装：
 
 ```bash
 pip install "franky-control @ git+ssh://git@github.com/xensedyl/franky.git"

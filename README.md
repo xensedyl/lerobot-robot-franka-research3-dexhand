@@ -26,13 +26,21 @@ pip install -e ./lerobot-robot-franka-research3
 pip install -e ./lerobot-robot-revo2-hand
 ```
 
-The Franka package also requires `franky`:
+The Franka package also requires `franky`. If you use a local checkout, first
+initialize the `ruckig` submodule and install without pip build isolation:
 
 ```bash
-pip install -e ./franky
+cd franky
+git submodule update --init --recursive
+pip install -e . --no-build-isolation
 ```
 
-or:
+The `ruckig` submodule is required by CMake; an empty `ruckig/` directory will
+fail with `does not contain a CMakeLists.txt file`. `--no-build-isolation`
+avoids pip isolated-build failures when `cmake` is installed from the Python
+`cmake` package.
+
+You can also install the fork directly:
 
 ```bash
 pip install "franky-control @ git+ssh://git@github.com/xensedyl/franky.git"
