@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools-scm[toml]>=8", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lerobot_robot_franka_research3_dexhand"
+dynamic = ["version"]
+description = "Franka Research 3 plus Revo2 dexterous hand integration with LeRobot"
+readme = "README.md"
+authors = [
+  { name = "XenseRobotics" },
+]
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "lerobot>=0.4",
+  "lerobot_robot_franka_research3",
+  "lerobot_robot_revo2_hand",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lerobot_robot_franka_research3_dexhand", "lerobot_robot_franka_research3_dexhand.*"]
+exclude = ["*.egg-info"]
+
+[tool.setuptools_scm]
+tag_regex = "^v(?P<version>\\d+\\.\\d+\\.\\d+)$"
+fallback_version = "0.0.0"

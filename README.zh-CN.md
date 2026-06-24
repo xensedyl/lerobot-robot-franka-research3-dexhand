@@ -1,0 +1,83 @@
+# LeRobot Franka Research 3 + Revo2 Hand Robot
+
+这是 Franka Research 3 机械臂 + Revo2 灵巧手的独立 LeRobot robot 插件包。
+
+该包注册：
+
+- `--robot.type=franka_research3_dexhand`
+
+它依赖两个独立包：
+
+- `lerobot-robot-franka-research3`
+- `lerobot-robot-revo2-hand`
+
+机械臂部分使用 Franky-backed `FrankaResearch3`，灵巧手部分使用
+Revo2 SDK-backed `Revo2Hand`。
+
+## 依赖包安装
+
+先安装两个依赖插件：
+
+```bash
+pip install -e ./lerobot-robot-franka-research3
+pip install -e ./lerobot-robot-revo2-hand
+```
+
+Franka 包还需要 `franky`：
+
+```bash
+pip install -e ./franky
+```
+
+或者直接从 Git 安装：
+
+```bash
+pip install "franky-control @ git+ssh://git@github.com/xensedyl/franky.git"
+```
+
+Revo2 包需要 BrainCo SDK 模块：
+
+```text
+bc_stark_sdk.main_mod
+```
+
+## 安装本插件
+
+```bash
+cd lerobot-robot-franka-research3-dexhand
+pip install -e .
+```
+
+## Pico4 Hand 遥操作
+
+配合 `lerobot-teleoperator-pico4-hand`：
+
+```bash
+lerobot-teleoperate-pico4-hand \
+  --robot.type=franka_research3_dexhand \
+  --robot.fci_ip=192.168.99.111 \
+  --robot.control_mode=cartesian_impedance \
+  --robot.use_gripper=false \
+  --robot.dexhand_hand_type=left \
+  --robot.dexhand_auto_detect_quick=true \
+  --teleop.type=pico4_hand \
+  --teleop.hand_type=left \
+  --teleop.robot_name=revo2 \
+  --teleop.retargeting_type=vector \
+  --fps=30 \
+  --display_data=false
+```
+
+组合 robot 的 action space 包含 Franka TCP action keys 和 Revo2 手指关节 keys：
+
+```text
+tcp.x tcp.y tcp.z tcp.r1 ... tcp.r6
+l_th_prox.pos l_th_mcp.pos l_idx_prox.pos l_mid_prox.pos l_ring_prox.pos l_pky_prox.pos
+```
+
+## 说明
+
+这个组合包会关闭 Franka arm 侧的串口夹爪，改用配置里的 dexhand。
+默认 dexhand 类型是 `revo2_hand`。
+
+上真机前，建议先分别验证 arm-only 和 hand-only 两个插件。
