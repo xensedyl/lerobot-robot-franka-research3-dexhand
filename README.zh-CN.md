@@ -56,6 +56,34 @@ cd lerobot-robot-franka-research3-dexhand
 pip install -e .
 ```
 
+## USB 串口权限配置
+
+如果 Revo2 或基于 FTDI 的 USB 串口设备无法打开，可以为 FTDI FT2232 设备
+`0403:6010` 配置 udev 权限。这是推荐的长期方案。
+
+```bash
+sudo tee /etc/udev/rules.d/99-ftdi-ft2232.rules >/dev/null <<'EOF'
+# FTDI FT2232C/D/H Dual UART/FIFO (0403:6010)
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE:="0666", GROUP="dialout"
+SUBSYSTEM=="tty", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE:="0666", GROUP="dialout", ENV{ID_MM_DEVICE_IGNORE}="1"
+EOF
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+如果权限没有立即更新，重新插拔 USB 设备。
+
+临时测试时，也可以直接修改当前 `/dev/ttyUSB*` 节点权限：
+
+```bash
+ls -l /dev/ttyUSB*
+sudo chmod 666 /dev/ttyUSB*
+```
+
+`chmod` 方法不是持久配置。设备重新插拔、系统重启，或者设备变成新的
+`/dev/ttyUSB*` 路径后，都可能需要重新执行。
+
 ## Pico4 Hand 遥操作
 
 配合 `lerobot-teleoperator-pico4-hand`：

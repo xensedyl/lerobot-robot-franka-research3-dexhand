@@ -59,6 +59,37 @@ cd lerobot-robot-franka-research3-dexhand
 pip install -e .
 ```
 
+## USB Serial Permissions
+
+If Revo2 or an FTDI-based USB serial device cannot be opened, configure udev
+permissions for the FTDI FT2232 device (`0403:6010`). This is the recommended
+persistent fix.
+
+```bash
+sudo tee /etc/udev/rules.d/99-ftdi-ft2232.rules >/dev/null <<'EOF'
+# FTDI FT2232C/D/H Dual UART/FIFO (0403:6010)
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE:="0666", GROUP="dialout"
+SUBSYSTEM=="tty", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6010", MODE:="0666", GROUP="dialout", ENV{ID_MM_DEVICE_IGNORE}="1"
+EOF
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+
+Unplug and replug the USB device after reloading the rules if the permissions do
+not update immediately.
+
+For a temporary test, you can directly relax permissions on the current
+`ttyUSB` nodes:
+
+```bash
+ls -l /dev/ttyUSB*
+sudo chmod 666 /dev/ttyUSB*
+```
+
+The `chmod` method is not persistent. It must be repeated after unplugging the
+device, rebooting, or if the device is assigned a new `/dev/ttyUSB*` path.
+
 ## Pico4 Hand Teleoperation
 
 With `lerobot-teleoperator-pico4-hand` installed:
