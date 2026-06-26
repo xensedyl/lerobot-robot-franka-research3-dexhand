@@ -27,4 +27,6 @@ def test_franka_research3_dexhand_can_be_instantiated():
     assert isinstance(robot.dexhand, Revo2Hand)
     assert robot.name == "franka_research3_dexhand"
     assert "tcp.x" in robot.action_features
+    assert "gripper.pos" not in robot.observation_features
+    assert "gripper.pos" not in robot.action_features
     assert "l_idx_prox.pos" in robot.action_features
