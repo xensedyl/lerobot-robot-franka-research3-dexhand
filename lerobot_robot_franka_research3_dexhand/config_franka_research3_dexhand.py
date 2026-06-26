@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from lerobot.robots.config import RobotConfig
@@ -15,6 +15,11 @@ class FrankaResearch3DexhandConfig(FrankaResearch3Config):
 
     use_gripper: bool = False
     connect_dexhand: bool = True
+
+    # Home position for robot (7 joint angles in radians). Overrides the base
+    # FrankaResearch3Config default so the dexhand setup can use its own posture.
+    # Can be passed via CLI, e.g. --robot.robot_home_position='[...]'.
+    robot_home_position: list = field(default_factory=lambda: [0.0, 0.0, 0.3, -2.4, -1.3, 1.4, 0.2])
     # Annotated as Any to prevent draccus from recursively expanding RobotConfig
     # subclasses in the CLI parser. At runtime this holds a RobotConfig.
     dexhand: Any = None
